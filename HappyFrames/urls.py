@@ -17,12 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from loginApp import urls as login_urls
 from orders import urls as orders_urls
-# from paytm_payments import urls as paytm_payment_urls
+from paytm_payments import urls as paytm_payment_urls
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('loginApp/', include(login_urls)),
     path('orders/', include(orders_urls)),
-    # path('paytm_payment/', include(paytm_payment_urls)),
+    path('paytm_payment/', include(paytm_payment_urls)),
     ]

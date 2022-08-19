@@ -10,6 +10,7 @@ class AddressSerializer(serializers.Serializer):
     photos = serializers.ListSerializer(child=serializers.URLField(), allow_null=True)
     tile = serializers.URLField(allow_null=True)
     order_total = serializers.FloatField(allow_null=True)
+    is_paid = serializers.BooleanField()
 
 
 class UserOrders:
@@ -23,7 +24,8 @@ class UserOrders:
             order_status: str,
             address: str,
             photos: list,
-            tile: str
+            tile: str,
+            is_paid: bool
     ):
         self.order_id = order_id
         self.full_name = full_name
@@ -34,6 +36,7 @@ class UserOrders:
         self.address = address
         self.photos = photos
         self.tile = tile
+        self.is_paid = is_paid
 
 
 class UserOrdersSerializer(serializers.Serializer):
@@ -46,6 +49,7 @@ class UserOrdersSerializer(serializers.Serializer):
     address = serializers.JSONField(allow_null=True)
     photos = serializers.ListSerializer(child=serializers.URLField(), allow_null=True)
     tile = serializers.URLField(allow_null=True)
+    is_paid = serializers.BooleanField()
 
 
 class UserOrdersDeserializer(SuccessSerializer):

@@ -23,6 +23,7 @@ class OrdersAPI(APIView):
                 order = Orders.objects.create(
                     user=user[0],
                     order_total=serializer.validated_data['order_total'],
+                    is_paid=serializer.validated_data['is_paid'],
                     order_state_id=1
                 )
                 photos = serializer.validated_data['photos']
@@ -37,6 +38,7 @@ class OrdersAPI(APIView):
                     'order_total',
                     'ordered_date',
                     'delivered_date',
+                    'is_paid',
                     order_status=F('order_state__state'),
                     full_name=F('user__full_name'),
                     address=F('user__address')
@@ -76,6 +78,7 @@ class UserOrdersAPI(APIView):
                     'order_total',
                     'ordered_date',
                     'delivered_date',
+                    'is_paid',
                     order_status=F('order_state__state'),
                     full_name=F('user__full_name'),
                     address=F('user__address')

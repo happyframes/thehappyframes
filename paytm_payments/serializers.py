@@ -1,12 +1,7 @@
 from rest_framework import serializers
 
-from orders.models import Orders
 
-
-class OrderSerializer(serializers.ModelSerializer):
-    ordered_date = serializers.DateField()
-
-    class Meta:
-        model = Orders
-        fields = '__all__'
-        depth = 2
+class OrderSerializer(serializers.Serializer):
+    order_id = serializers.IntegerField()
+    order_total = serializers.FloatField()
+    email = serializers.EmailField()

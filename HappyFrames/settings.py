@@ -27,9 +27,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 SECRET_KEY = os.getenv("secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -144,11 +144,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # HTTPS Settings
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+#SECURE_SSL_REDIRECT = True
 
 # HSTS Settings
-SECURE_HSTS_SECONDS = 60
-SECURE_HSTS_PRELOAD = True
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+#SECURE_HSTS_SECONDS = 60
+#SECURE_HSTS_PRELOAD = True
+#SECURE_HSTS_INCLUDE_SUBDOMAINS = True

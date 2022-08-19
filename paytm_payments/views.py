@@ -16,7 +16,7 @@ load_dotenv()
 
 class StartPaymentAPI(APIView):
     def post(self, request):
-        serializer = OrderSerializer(request.data)
+        serializer = OrderSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             order_id = serializer.validated_data['order_id']
             amount = serializer.validated_data['order_total']
@@ -48,7 +48,7 @@ class StartPaymentAPI(APIView):
 class HandlePaymentAPI(APIView):
     def post(self, request):
         checksum = ""
-        form = request.POST
+        form = request.data
 
         response_dict = {}
         order = None  # initialize the order variable with None
