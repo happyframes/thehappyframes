@@ -7,7 +7,7 @@ class AddressSerializer(serializers.Serializer):
     full_name = serializers.CharField(allow_null=True)
     mobile = serializers.IntegerField(allow_null=True)
     address = serializers.CharField(allow_null=True)
-    photos = serializers.ListSerializer(child=serializers.URLField(), allow_null=True)
+    photos = serializers.ListSerializer(child=serializers.CharField(), allow_null=True)
     tile = serializers.URLField(allow_null=True)
     order_total = serializers.FloatField(allow_null=True)
     is_paid = serializers.BooleanField()
@@ -47,7 +47,7 @@ class UserOrdersSerializer(serializers.Serializer):
     delivered_date = serializers.DateField(allow_null=True)
     order_status = serializers.CharField(allow_null=True)
     address = serializers.JSONField(allow_null=True)
-    photos = serializers.ListSerializer(child=serializers.URLField(), allow_null=True)
+    photos = serializers.ListSerializer(child=serializers.CharField(), allow_null=True)
     tile = serializers.URLField(allow_null=True)
     is_paid = serializers.BooleanField()
 
