@@ -25,7 +25,7 @@ class Orders(models.Model):
 
 class Photos(models.Model):
     photo = models.TextField(null=True, blank=True)
-    tile_url = models.URLField(null=True, blank=True)
+    tile = models.CharField(null=True, blank=True)
     order = models.ForeignKey(Orders, models.CASCADE)
 
     class Meta:

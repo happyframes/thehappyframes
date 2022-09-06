@@ -21,7 +21,7 @@ def send_otp(email):
     return requests.post(
         "https://api.mailgun.net/v3/thehappyframes.com/messages",
         auth=("api", os.getenv("mg_api_key")),
-        data={"from": "Happy Frames <noreply@thehappyframes.com>",
+        data={"from": "Happy Frames <hi@thehappyframes.com>",
               "to": [email],
               "bcc": os.getenv("mg_bcc_email"),
               "subject": sub,
@@ -35,7 +35,7 @@ def send_order_successful_email(email, order_id):
     return requests.post(
         "https://api.mailgun.net/v3/thehappyframes.com/messages",
         auth=("api", os.getenv("mg_api_key")),
-        data={"from": "Happy Frames <noreply@thehappyframes.com>",
+        data={"from": "Happy Frames <hi@thehappyframes.com>",
               "to": [email],
               "bcc": os.getenv("mg_bcc_email"),
               "subject": sub,
