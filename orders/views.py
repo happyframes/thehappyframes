@@ -30,7 +30,7 @@ class OrdersAPI(APIView):
                 for photo in photos:
                     photos_data = Photos.objects.create(
                         photo=photo,
-                        tile_url=serializer.validated_data['tile'],
+                        tile=serializer.validated_data['tile'],
                         order=order
                     )
                 user_order = Orders.objects.filter(order_id=order.order_id).values(
@@ -44,7 +44,7 @@ class OrdersAPI(APIView):
                     address=F('user__address')
                 ).first()
                 photos_obj = Photos.objects.filter(order_id=order.order_id)
-                tile = photos_obj.values_list('tile_url', flat=True).distinct()[0]
+                tile = photos_obj.values_list('tile', flat=True).distinct()[0]
                 photos = photos_obj.values_list('photo', flat=True)
                 user_order.update(photos=list(photos), tile=tile)
                 api_output = UserOrders(**user_order)
@@ -86,7 +86,7 @@ class UserOrdersAPI(APIView):
                 if user_orders:
                     for order in user_orders:
                         photos_obj = Photos.objects.filter(order_id=order['order_id'])
-                        tile = photos_obj.values_list('tile_url', flat=True).distinct()[0]
+                        tile = photos_obj.values_list('tile', flat=True).distinct()[0]
                         photos = photos_obj.values_list('photo', flat=True)
                         order.update(photos=list(photos), tile=tile)
                     api_output = []
