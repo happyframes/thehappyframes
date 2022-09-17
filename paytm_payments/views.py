@@ -28,7 +28,7 @@ class StartPaymentAPI(APIView):
                 'ORDER_ID': str(order_id),
                 'TXN_AMOUNT': str(amount),
                 'CUST_ID': email,
-                'INDUSTRY_TYPE_ID': 'Retail',
+                # 'INDUSTRY_TYPE_ID': 'Retail',
                 'WEBSITE': 'WEBSTAGING',
                 'CHANNEL_ID': 'WEB',
                 'CALLBACK_URL': 'https://thehappyframes.com/api/paytm_payments/handlepayment/',
@@ -54,10 +54,12 @@ class HandlePaymentAPI(APIView):
         order = None  # initialize the order variable with None
 
         for i in form.keys():
-            response_dict[i] = form[i]
+            # response_dict[i] = form[i]
             if i == 'CHECKSUMHASH':
                 # 'CHECKSUMHASH' is coming from paytm and we will assign it to checksum variable to verify our payment
-                checksum = form[i]
+                checksum = form[i][0]
+            else:
+                response_dict[i] = str(form[i][0])
 
             if i == 'ORDERID':
                 # we will get an order with id==ORDERID to turn isPaid=True when payment is successful
