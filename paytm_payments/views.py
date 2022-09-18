@@ -31,7 +31,7 @@ class StartPaymentAPI(APIView):
                 # 'INDUSTRY_TYPE_ID': 'Retail',
                 'WEBSITE': 'WEBSTAGING',
                 'CHANNEL_ID': 'WEB',
-                'CALLBACK_URL': 'https://thehappyframes.com/api/paytm_payments/handlepayment/',
+                'CALLBACK_URL': 'https://thehappyframes.com/payment-status',
                 # this is the url of handlepayment function, paytm will send a POST request to the fuction associated with this CALLBACK_URL
             }
 
