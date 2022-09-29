@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import *
+from orders.views import OrdersAPI, UserOrdersAPI, AllOrdersAPI
 
 
 urlpatterns = [
     path('photos/', OrdersAPI.as_view()),
     path('my_orders/', UserOrdersAPI.as_view()),
+    path('all_orders/', AllOrdersAPI.as_view()),
 ]

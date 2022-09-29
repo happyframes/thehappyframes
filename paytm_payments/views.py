@@ -74,7 +74,7 @@ class HandlePaymentAPI(APIView):
                 print('order successful')
                 order.isPaid = True
                 order.save()
-                send_order_successful_email(form['CUSTID'], form['ORDERID'])
+                send_order_successful_email(form['CUST_ID'], form['ORDERID'])
                 return Response({
                     'status': 200,
                     'message': "Order Successful",

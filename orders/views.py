@@ -116,3 +116,39 @@ class UserOrdersAPI(APIView):
             data = f"Error: {e}"
             failure_ob = Failure(data, 500, message)
             return Response(FailureSerializer(failure_ob).data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class AllOrdersAPI(APIView):
+    def post(self, request):
+        try:
+            orders = Orders.objects.all().values(
+                'order_id',
+                'order_total',
+                'ordered_date',
+                'delivered_date',
+                'is_paid',
+                order_status=F('order_state__state'),
+                full_name=F('user__full_name'),
+                address=F('user__address')
+            )
+            for order in orders:
+                photos_obj = Photos.objects.filter(order_id=order['order_id'])
+                tile = photos_obj.values_list('tile', flat=True).distinct()[0]
+                photos = photos_obj.values_list('photo', flat=True)
+                order.update(photos=list(photos), tile=tile)
+            api_output = []
+            for order in orders:
+                output = UserOrders(**order)
+                api_output.append(output)
+            succes_obj = Success(api_output)
+            response = UserOrdersDeserializer(succes_obj)
+            return Response({
+                'status': 200,
+                'message': f"Total Order details",
+                'data': response.data['data']
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            message = "Internal server Error"
+            data = f"Error: {e}"
+            failure_ob = Failure(data, 500, message)
+            return Response(FailureSerializer(failure_ob).data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
