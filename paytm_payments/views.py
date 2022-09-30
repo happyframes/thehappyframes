@@ -28,7 +28,7 @@ class StartPaymentAPI(APIView):
                 'ORDER_ID': str(order_id),
                 'TXN_AMOUNT': str(amount),
                 'CUST_ID': email,
-                # 'INDUSTRY_TYPE_ID': 'Retail',
+                'INDUSTRY_TYPE_ID': 'Retail',
                 'WEBSITE': 'WEBSTAGING',
                 'CHANNEL_ID': 'WEB',
                 'CALLBACK_URL': 'https://thehappyframes.com/payment-status',
