@@ -59,11 +59,11 @@ class HandlePaymentAPI(APIView):
                 # 'CHECKSUMHASH' is coming from paytm and we will assign it to checksum variable to verify our payment
                 checksum = form[i][0]
             else:
-                response_dict[i] = str(form[i][0])
+                response_dict[i] = str(form[i])
 
             if i == 'ORDERID':
                 # we will get an order with id==ORDERID to turn isPaid=True when payment is successful
-                order = Orders.objects.get(order_id=form[i][0])
+                order = Orders.objects.get(order_id=form[i])
 
         # we will verify the payment using our merchant key and the checksum that we are getting from Paytm request.POST
         verify = Checksum.verify_checksum(response_dict, os.getenv('MERCHANTKEY'), checksum)
