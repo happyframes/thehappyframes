@@ -51,7 +51,8 @@ class VerifyOTPAPI(APIView):
                         'email',
                         'full_name',
                         'mobile',
-                        'address'
+                        'address',
+                        'is_staff'
                     )
                     return Response({
                         'status': 200,

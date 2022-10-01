@@ -63,7 +63,7 @@ class HandlePaymentAPI(APIView):
 
             if i == 'ORDERID':
                 # we will get an order with id==ORDERID to turn isPaid=True when payment is successful
-                order = Orders.objects.get(id=form[i])
+                order = Orders.objects.get(order_id=form[i][0])
 
         # we will verify the payment using our merchant key and the checksum that we are getting from Paytm request.POST
         verify = Checksum.verify_checksum(response_dict, os.getenv('MERCHANTKEY'), checksum)
@@ -71,10 +71,9 @@ class HandlePaymentAPI(APIView):
         if verify:
             if response_dict['RESPCODE'] == '01':
                 # if the response code is 01 that means our transaction is successful
-                print('order successful')
                 order.isPaid = True
                 order.save()
-                send_order_successful_email(form['CUST_ID'], form['ORDERID'])
+                send_order_successful_email(order.user, form['ORDERID'])
                 return Response({
                     'status': 200,
                     'message': "Order Successful",
