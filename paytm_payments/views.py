@@ -45,25 +45,31 @@ class StartPaymentAPI(APIView):
                 }, status=status.HTTP_200_OK)
 
 
+# received_data = dict(request.POST)
+#         paytm_params = {}
+#         paytm_checksum = received_data['CHECKSUMHASH'][0]
+#         for key, value in received_data.items():
+#             if key == 'CHECKSUMHASH':
+#                 paytm_checksum = value[0]
+#             else:
+#                 paytm_params[key] = str(value[0])
 class HandlePaymentAPI(APIView):
     def post(self, request):
-        checksum = ""
-        form = request.data
-
+        received_data = dict(request.POST)
         response_dict = {}
+        checksum = received_data['CHECKSUMHASH'][0]
         order = None  # initialize the order variable with None
 
-        for i in form.keys():
+        for key, value in received_data.items():
             # response_dict[i] = form[i]
-            if i == 'CHECKSUMHASH':
+            if key == 'CHECKSUMHASH':
                 # 'CHECKSUMHASH' is coming from paytm and we will assign it to checksum variable to verify our payment
-                checksum = form[i][0]
+                checksum = value[0]
             else:
-                response_dict[i] = str(form[i])
+                response_dict[key] = str(value[0])
 
-            if i == 'ORDERID':
-                # we will get an order with id==ORDERID to turn isPaid=True when payment is successful
-                order = Orders.objects.get(order_id=form[i])
+        # we will get an order with id==ORDERID to turn isPaid=True when payment is successful
+        order = Orders.objects.get(order_id=received_data['ORDERID'][0])
 
         # we will verify the payment using our merchant key and the checksum that we are getting from Paytm request.POST
         verify = Checksum.verify_checksum(response_dict, os.getenv('MERCHANTKEY'), checksum)
@@ -73,7 +79,7 @@ class HandlePaymentAPI(APIView):
                 # if the response code is 01 that means our transaction is successful
                 order.isPaid = True
                 order.save()
-                send_order_successful_email(order.user, form['ORDERID'])
+                send_order_successful_email(order.user, received_data['ORDERID'])
                 return Response({
                     'status': 200,
                     'message': "Order Successful",
@@ -85,3 +91,11 @@ class HandlePaymentAPI(APIView):
                     'message': f"order was not successful because {response_dict['RESPMSG']}",
                     'data': response_dict
                 }, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            received_data['message'] = "Checksum Mismatched"
+            return Response({
+                    'status': 400,
+                    'message': "Checksum Mismatched",
+                    'data': response_dict
+                }, status=status.HTTP_400_BAD_REQUEST)
+
