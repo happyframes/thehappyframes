@@ -11,6 +11,8 @@ def send_otp(email):
     secret = pyotp.random_base32()
     totp = pyotp.TOTP(secret, digits=4, interval=600)
     otp = totp.now()
+    if otp.startswith('0'):
+        otp = otp.replace("0", "1", 1)
     sub = "Happy Frames loginApp passcode."
     msg = f"Thank you for signing up with Happy frames. {otp} is the OTP for your loginApp. This OTP will expire within " \
           f"10 min.\n\nThank you, \nHappy frames"
