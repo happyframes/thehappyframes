@@ -137,7 +137,7 @@ class AllOrdersAPI(APIView):
                 tile = photos_obj.values_list('tile', flat=True).distinct()[0]
                 photos = photos_obj.values_list('photo', flat=True)
                 order.update(photos=list(photos), tile=tile)
-            paginator = Paginator(orders, 10)
+            paginator = Paginator(orders, 11)
             page_obj = paginator.get_page(page)
             api_output = []
             for order in page_obj:
@@ -148,7 +148,9 @@ class AllOrdersAPI(APIView):
             return Response({
                 'status': 200,
                 'message': f"Total Order details",
-                'data': response.data['data']
+                'data': response.data['data'],
+                'count': paginator.count,
+                'num_pages': paginator.num_pages
             }, status=status.HTTP_200_OK)
         except Exception as e:
             message = "Internal server Error"
