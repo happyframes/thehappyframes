@@ -7,6 +7,7 @@ from .models import Photos, Orders
 from loginApp.serializers import RegisterSerializer
 from django.db.models import F
 from utilities import Success, Failure, FailureSerializer
+from django.core.paginator import Paginator
 
 
 class OrdersAPI(APIView):
@@ -119,7 +120,7 @@ class UserOrdersAPI(APIView):
 
 
 class AllOrdersAPI(APIView):
-    def post(self, request):
+    def post(self, request, page=1):
         try:
             orders = Orders.objects.all().values(
                 'order_id',
@@ -136,8 +137,10 @@ class AllOrdersAPI(APIView):
                 tile = photos_obj.values_list('tile', flat=True).distinct()[0]
                 photos = photos_obj.values_list('photo', flat=True)
                 order.update(photos=list(photos), tile=tile)
+            paginator = Paginator(orders, 10)
+            page_obj = paginator.get_page(page)
             api_output = []
-            for order in orders:
+            for order in page_obj:
                 output = UserOrders(**order)
                 api_output.append(output)
             succes_obj = Success(api_output)
