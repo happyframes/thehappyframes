@@ -137,7 +137,7 @@ class AllOrdersAPI(APIView):
                 tile = photos_obj.values_list('tile', flat=True).distinct()[0]
                 photos = photos_obj.values_list('photo', flat=True)
                 order.update(photos=list(photos), tile=tile)
-            paginator = Paginator(orders, 11)
+            paginator = Paginator(orders, 10)
             page_obj = paginator.get_page(page)
             api_output = []
             for order in page_obj:
