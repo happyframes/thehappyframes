@@ -1,13 +1,14 @@
 import os
+from datetime import datetime 
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
 from orders.models import Orders
-from paytm_payments.serializers import OrderSerializer
+from paytm_payments.serializers import OrderSerializer, OrderStatusSerializer
 from paytm_payments import Checksum
-from loginApp.emails import send_order_successful_email
+from loginApp.emails import send_order_status_email
 
 from dotenv import load_dotenv
 
@@ -45,57 +46,103 @@ class StartPaymentAPI(APIView):
                 }, status=status.HTTP_200_OK)
 
 
-# received_data = dict(request.POST)
-#         paytm_params = {}
-#         paytm_checksum = received_data['CHECKSUMHASH'][0]
-#         for key, value in received_data.items():
-#             if key == 'CHECKSUMHASH':
-#                 paytm_checksum = value[0]
-#             else:
-#                 paytm_params[key] = str(value[0])
 class HandlePaymentAPI(APIView):
     def post(self, request):
-        received_data = dict(request.POST)
-        response_dict = {}
-        checksum = received_data['CHECKSUMHASH'][0]
-        order = None  # initialize the order variable with None
-
-        for key, value in received_data.items():
-            # response_dict[i] = form[i]
-            if key == 'CHECKSUMHASH':
-                # 'CHECKSUMHASH' is coming from paytm and we will assign it to checksum variable to verify our payment
-                checksum = value[0]
-            else:
-                response_dict[key] = str(value[0])
-
-        # we will get an order with id==ORDERID to turn isPaid=True when payment is successful
-        order = Orders.objects.get(order_id=received_data['ORDERID'][0])
-
-        # we will verify the payment using our merchant key and the checksum that we are getting from Paytm request.POST
-        verify = Checksum.verify_checksum(response_dict, os.getenv('MERCHANTKEY'), checksum)
-
-        if verify:
-            if response_dict['RESPCODE'] == '01':
-                # if the response code is 01 that means our transaction is successful
-                order.isPaid = True
-                order.save()
-                send_order_successful_email(order.user, received_data['ORDERID'])
-                return Response({
-                    'status': 200,
-                    'message': "Order Successful",
-                    'data': response_dict
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({
-                    'status': 400,
-                    'message': f"order was not successful because {response_dict['RESPMSG']}",
-                    'data': response_dict
-                }, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            received_data['message'] = "Checksum Mismatched"
+        try:
+            serializer = OrderStatusSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                order_id = serializer.validated_data['order_id']
+                order_status = serializer.validated_data['order_status']
+                email = serializer.validated_data['email']
+                order = Orders.objects.get(order_id=order_id)
+    
+                if order_status == "Order Processing":
+                    order.isPaid = False
+                    order.order_state_id = 1
+                    order.save()
+                    sub = "Order Processing"
+                    msg = f"Thank you for shopping with The Happy frames. Your order({order_id}) is processing. " \
+                          f"You will receive the order confirmation soon. \n\nThank you, \nThe Happy frames"
+                    send_order_status_email(email, sub, msg)
+                    return Response({
+                        'status': 200,
+                        'message': "Order processing email sent to customer",
+                        'data': order_status
+                    }, status=status.HTTP_200_OK)
+                elif order_status == "Order Confirmed":
+                    order.isPaid = True
+                    order.order_state_id = 2
+                    order.save()
+                    sub = "Order Confirmed"
+                    msg = f"Thank you for shopping with The Happy frames. Your order({order_id}) was successfully " \
+                          f"placed and we will deliver your order soon.\n\nThank you, \nThe Happy frames"
+                    send_order_status_email(email, sub, msg)
+                    return Response({
+                        'status': 200,
+                        'message': "Order confirmed email sent to customer",
+                        'data': order_status
+                    }, status=status.HTTP_200_OK)
+                elif order_status == "Shipped":
+                    order.order_state_id = 3
+                    order.save()
+                    sub = "Order Shipped"
+                    msg = f"Thank you for shopping with The Happy frames. Your order({order_id}) was shipped by the" \
+                          f" courier and your order will be delivered soon.\n\nThank you, \nThe Happy frames"
+                    send_order_status_email(email, sub, msg)
+                    return Response({
+                        'status': 200,
+                        'message': "Order shipped email sent to customer",
+                        'data': order_status
+                    }, status=status.HTTP_200_OK)
+                elif order_status == "Delivered":
+                    order.order_state_id = 4
+                    order.save()
+                    sub = "Order Delivered"
+                    msg = f"Thank you for shopping with The Happy frames. Your order({order_id}) was successfully " \
+                          f"delivered on {datetime.today().date()}. We hope you visit us again.\n\nThank you, " \
+                          f"\nThe Happy frames"
+                    send_order_status_email(email, sub, msg)
+                    return Response({
+                        'status': 200,
+                        'message': "Order delivered email sent to customer",
+                        'data': order_status
+                    }, status=status.HTTP_200_OK)
+                elif order_status == "Cancelled":
+                    order.isPaid = False
+                    order.order_state_id = 5
+                    order.save()
+                    sub = "Order Cancelled"
+                    msg = f"Thank you for shopping with The Happy frames. Your order({order_id}) was cancelled. " \
+                          f"Please be assured, if any amount deducted will be refunded within 5-7 business days." \
+                          f"\n\nThank you,\nThe Happy frames"
+                    send_order_status_email(email, sub, msg)
+                    return Response({
+                        'status': 200,
+                        'message': "Order cancelled email sent to customer",
+                        'data': order_status
+                    }, status=status.HTTP_200_OK)
+                elif order_status == "Refund initiated":
+                    order.order_state_id = 6
+                    order.save()
+                    sub = "Refund initiated"
+                    msg = f"Thank you for shopping with The Happy frames. Refund for your order({order_id}) was " \
+                          f"initiated and will be credited to your original payment method within 5-7 business days." \
+                          f"\n\nThank you, \nThe Happy frames"
+                    send_order_status_email(email, sub, msg)
+                    return Response({
+                        'status': 200,
+                        'message': "Refund initiated email sent to customer",
+                        'data': order_status
+                    }, status=status.HTTP_200_OK)
+                else:
+                    return Response({
+                        'status': 400,
+                        'message': "Invalid input",
+                        'data': f"Invalid order status - {order_status}"
+                    }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
             return Response({
-                    'status': 400,
-                    'message': "Checksum Mismatched",
-                    'data': response_dict
-                }, status=status.HTTP_400_BAD_REQUEST)
-
+                'status': 500,
+                'message': "Something went wrong",
+                'data': f"Error: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
