@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,7 +23,10 @@ class OrdersAPI(APIView):
                               "mobile": serializer.validated_data['mobile'],
                               "address": serializer.validated_data['address']}
                 )
+                # last_id = Orders.objects.latest('order_id')
+                # order_id = str(last_id.order_id + 1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                 order = Orders.objects.create(
+                    # order_id=order_id,
                     user=user[0],
                     order_total=serializer.validated_data['order_total'],
                     is_paid=serializer.validated_data['is_paid'],
@@ -83,7 +88,7 @@ class UserOrdersAPI(APIView):
                     order_status=F('order_state__state'),
                     full_name=F('user__full_name'),
                     address=F('user__address')
-                )
+                ).order_by('-order_id')
                 if user_orders:
                     for order in user_orders:
                         photos_obj = Photos.objects.filter(order_id=order['order_id'])
@@ -130,8 +135,9 @@ class AllOrdersAPI(APIView):
                 'is_paid',
                 order_status=F('order_state__state'),
                 full_name=F('user__full_name'),
+                phone_number=F('user__mobile'),
                 address=F('user__address')
-            )
+            ).order_by('-order_id')
             for order in orders:
                 photos_obj = Photos.objects.filter(order_id=order['order_id'])
                 tile = photos_obj.values_list('tile', flat=True).distinct()[0]
