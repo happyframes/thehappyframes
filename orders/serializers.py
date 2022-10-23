@@ -45,14 +45,14 @@ class UserOrdersSerializer(serializers.Serializer):
     order_id = serializers.IntegerField()
     full_name = serializers.CharField(allow_null=True)
     order_total = serializers.FloatField(allow_null=True)
+    is_paid = serializers.BooleanField()
     ordered_date = serializers.DateField(allow_null=True)
     delivered_date = serializers.DateField(allow_null=True)
     order_status = serializers.CharField(allow_null=True)
     address = serializers.JSONField(allow_null=True)
-    photos = serializers.ListSerializer(child=serializers.CharField(), allow_null=True)
-    tile = serializers.CharField(allow_null=True)
-    is_paid = serializers.BooleanField()
     phone_number = serializers.IntegerField(allow_null=True)
+    tile = serializers.CharField(allow_null=True)
+    photos = serializers.ListSerializer(child=serializers.CharField(), allow_null=True)
 
 
 class UserOrdersDeserializer(SuccessSerializer):

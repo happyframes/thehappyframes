@@ -87,6 +87,7 @@ class UserOrdersAPI(APIView):
                     'is_paid',
                     order_status=F('order_state__state'),
                     full_name=F('user__full_name'),
+                    phone_number=F('user__mobile'),
                     address=F('user__address')
                 ).order_by('-order_id')
                 if user_orders:
