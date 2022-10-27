@@ -47,6 +47,7 @@ class OrdersAPI(APIView):
                     'is_paid',
                     order_status=F('order_state__state'),
                     full_name=F('user__full_name'),
+                    phone_number=F('user__mobile'),
                     address=F('user__address')
                 ).first()
                 photos_obj = Photos.objects.filter(order_id=order.order_id)
