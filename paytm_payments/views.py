@@ -121,10 +121,10 @@ class HandlePaymentAPI(APIView):
                         'message': "Order cancelled email sent to customer",
                         'data': order_status
                     }, status=status.HTTP_200_OK)
-                elif order_status == "Refund initiated":
+                elif order_status == "Refund Initiated":
                     order.order_state_id = 6
                     order.save()
-                    sub = "Refund initiated"
+                    sub = "Refund Initiated"
                     msg = f"Thank you for shopping with The Happy frames. Refund for your order({order_id}) was " \
                           f"initiated and will be credited to your original payment method within 5-7 business days." \
                           f"\n\nThank you, \nThe Happy frames"
@@ -132,6 +132,19 @@ class HandlePaymentAPI(APIView):
                     return Response({
                         'status': 200,
                         'message': "Refund initiated email sent to customer",
+                        'data': order_status
+                    }, status=status.HTTP_200_OK)
+                elif order_status == "Refund Completed":
+                    order.order_state_id = 7
+                    order.save()
+                    sub = "Refund Completed"
+                    msg = f"Thank you for shopping with The Happy frames. Refund for your order({order_id}) was " \
+                          f"completed on {datetime.today().date()}. We hope you visit us again.\n\nThank you, " \
+                          f"\nThe Happy frames"
+                    send_order_status_email(email, sub, msg)
+                    return Response({
+                        'status': 200,
+                        'message': "Refund completed email sent to customer",
                         'data': order_status
                     }, status=status.HTTP_200_OK)
                 else:
