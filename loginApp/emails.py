@@ -25,7 +25,6 @@ def send_otp(email):
         auth=("api", os.getenv("mg_api_key")),
         data={"from": "The Happy Frames <hi@thehappyframes.com>",
               "to": [email],
-              "bcc": os.getenv("mg_bcc_email"),
               "subject": sub,
               "text": msg})
 

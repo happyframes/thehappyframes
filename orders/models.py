@@ -11,7 +11,7 @@ class OrderState(models.Model):
 
 
 class Orders(models.Model):
-    order_id = models.AutoField(primary_key=True)
+    order_id = models.IntegerField(primary_key=True)
     user = models.ForeignKey(UserDetails, models.DO_NOTHING)
     order_total = models.FloatField()
     is_paid = models.BooleanField()
