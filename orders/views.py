@@ -27,13 +27,12 @@ class OrdersAPI(APIView):
                               "mobile": serializer.validated_data['mobile'],
                               "address": serializer.validated_data['address']}
                 )
-                order_exist = Orders.objects.exists()
-                if not order_exist:
+                order_count = Orders.objects.all().count()
+                if not order_count:
                     order_id = str(1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                     logging.debug(f'{datetime.datetime.now()} - First order: {order_id}')
                 else:
-                    orders = Orders.objects.count()
-                    order_id = str(orders + 1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+                    order_id = str(order_count + 1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                     logging.debug(f'{datetime.datetime.now()} - Next order: {order_id}')
                 logging.debug(f'{datetime.datetime.now()} - Final order_id: {int(order_id)}')
                 order = Orders.objects.create(
