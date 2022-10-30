@@ -35,6 +35,7 @@ class OrdersAPI(APIView):
                     orders = Orders.objects.count()
                     order_id = str(orders + 1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                     logging.debug(f'{datetime.datetime.now()} - Next order: {order_id}')
+                logging.debug(f'{datetime.datetime.now()} - Final order_id: {int(order_id)}')
                 order = Orders.objects.create(
                     order_id=int(order_id),
                     user=user[0],
