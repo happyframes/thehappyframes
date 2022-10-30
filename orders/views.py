@@ -12,7 +12,8 @@ from utilities import Success, Failure, FailureSerializer
 from django.core.paginator import Paginator
 
 import logging
-logging.basicConfig(filename='code.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(handlers=[logging.FileHandler(filename="log_records.log",
+                                                  encoding='utf-8', mode='a+')], level=logging.DEBUG)
 
 
 class OrdersAPI(APIView):
