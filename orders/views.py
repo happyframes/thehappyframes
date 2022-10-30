@@ -43,6 +43,7 @@ class OrdersAPI(APIView):
                     is_paid=serializer.validated_data['is_paid'],
                     order_state_id=1
                 )
+                order.save()
                 photos = serializer.validated_data['photos']
                 for photo in photos:
                     photos_data = Photos.objects.create(
@@ -50,6 +51,7 @@ class OrdersAPI(APIView):
                         tile=serializer.validated_data['tile'],
                         order=order
                     )
+                    photos_data.save()
                 user_order = Orders.objects.filter(order_id=order.order_id).values(
                     'order_id',
                     'order_total',
