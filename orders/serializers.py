@@ -26,7 +26,8 @@ class UserOrders:
             photos: list,
             tile: str,
             is_paid: bool,
-            phone_number: int
+            phone_number: int,
+            email: str
     ):
         self.order_id = order_id
         self.full_name = full_name
@@ -39,6 +40,7 @@ class UserOrders:
         self.tile = tile
         self.is_paid = is_paid
         self.phone_number = phone_number
+        self.email = email
 
 
 class UserOrdersSerializer(serializers.Serializer):
@@ -51,6 +53,7 @@ class UserOrdersSerializer(serializers.Serializer):
     order_status = serializers.CharField(allow_null=True)
     address = serializers.JSONField(allow_null=True)
     phone_number = serializers.IntegerField(allow_null=True)
+    email = serializers.EmailField(allow_null=True)
     tile = serializers.CharField(allow_null=True)
     photos = serializers.ListSerializer(child=serializers.CharField(), allow_null=True)
 
