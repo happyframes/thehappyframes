@@ -11,6 +11,9 @@ from django.db.models import F
 from utilities import Success, Failure, FailureSerializer
 from django.core.paginator import Paginator
 
+import logging
+logging.basicConfig(filename='code.log', encoding='utf-8', level=logging.DEBUG)
+
 
 class OrdersAPI(APIView):
     def post(self, request):
@@ -26,9 +29,11 @@ class OrdersAPI(APIView):
                 order_exist = Orders.objects.exists()
                 if not order_exist:
                     order_id = str(1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+                    logging.debug(f'{datetime.datetime.now()} - First order: {order_id}')
                 else:
                     orders = Orders.objects.count()
                     order_id = str(orders + 1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+                    logging.debug(f'{datetime.datetime.now()} - Next order: {order_id}')
                 order = Orders.objects.create(
                     order_id=int(order_id),
                     user=user[0],
@@ -55,8 +60,11 @@ class OrdersAPI(APIView):
                     address=F('user__address')
                 ).first()
                 photos_obj = Photos.objects.filter(order_id=order.order_id)
-                tile = photos_obj.values_list('tile', flat=True).distinct()[0]
+                tile = photos_obj.values_list('tile', flat=True).distinct()
+                logging.debug(f'{datetime.datetime.now()} - Tile: {tile}')
                 photos = photos_obj.values_list('photo', flat=True)
+                tile = list(tile)[0]
+                logging.debug(f'{datetime.datetime.now()} - Tile 2: {tile}')
                 user_order.update(photos=list(photos), tile=tile)
                 api_output = UserOrders(**user_order)
                 succes_obj = Success([api_output])
@@ -98,7 +106,7 @@ class UserOrdersAPI(APIView):
                 if user_orders:
                     for order in user_orders:
                         photos_obj = Photos.objects.filter(order_id=order['order_id'])
-                        tile = photos_obj.values_list('tile', flat=True).distinct()[0]
+                        tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
                         photos = photos_obj.values_list('photo', flat=True)
                         order.update(photos=list(photos), tile=tile)
                     api_output = []
@@ -142,11 +150,12 @@ class AllOrdersAPI(APIView):
                 order_status=F('order_state__state'),
                 full_name=F('user__full_name'),
                 phone_number=F('user__mobile'),
+                email=F('user__email'),
                 address=F('user__address')
             ).order_by('-order_id')
             for order in orders:
                 photos_obj = Photos.objects.filter(order_id=order['order_id'])
-                tile = photos_obj.values_list('tile', flat=True).distinct()[0]
+                tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
                 photos = photos_obj.values_list('photo', flat=True)
                 order.update(photos=list(photos), tile=tile)
             paginator = Paginator(orders, 10)
