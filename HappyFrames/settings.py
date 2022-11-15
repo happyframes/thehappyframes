@@ -84,23 +84,23 @@ WSGI_APPLICATION = 'HappyFrames.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv("RDS_DB_NAME"),
-        'USER': os.getenv("RDS_USER"),
-        'PASSWORD': os.getenv("RDS_PASSWORD"),
-        'HOST': os.getenv("RDS_HOST"),
-        'PORT': os.getenv("RDS_PORT"),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.getenv("RDS_DB_NAME"),
+#         'USER': os.getenv("RDS_USER"),
+#         'PASSWORD': os.getenv("RDS_PASSWORD"),
+#         'HOST': os.getenv("RDS_HOST"),
+#         'PORT': os.getenv("RDS_PORT"),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

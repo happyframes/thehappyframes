@@ -8,7 +8,7 @@ class UserDetails(AbstractUser):
     full_name = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(unique=True)
     otp = models.CharField(max_length=4, null=True, blank=True)
-    mobile = models.IntegerField(null=True, blank=True)
+    mobile = models.CharField(max_length=255, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
 
     USERNAME_FIELD = 'email'

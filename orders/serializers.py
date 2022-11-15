@@ -5,7 +5,7 @@ from utilities import SuccessSerializer
 class AddressSerializer(serializers.Serializer):
     email = serializers.EmailField()
     full_name = serializers.CharField(allow_null=True)
-    mobile = serializers.IntegerField(allow_null=True)
+    mobile = serializers.CharField(allow_null=True)
     address = serializers.CharField(allow_null=True)
     photos = serializers.ListSerializer(child=serializers.CharField(), allow_null=True)
     tile = serializers.CharField(allow_null=True)
@@ -26,7 +26,7 @@ class UserOrders:
             photos: list,
             tile: str,
             is_paid: bool,
-            phone_number: int,
+            phone_number: str,
             email: str
     ):
         self.order_id = order_id
@@ -52,7 +52,7 @@ class UserOrdersSerializer(serializers.Serializer):
     delivered_date = serializers.DateField(allow_null=True)
     order_status = serializers.CharField(allow_null=True)
     address = serializers.JSONField(allow_null=True)
-    phone_number = serializers.IntegerField(allow_null=True)
+    phone_number = serializers.CharField(allow_null=True)
     email = serializers.EmailField(allow_null=True)
     tile = serializers.CharField(allow_null=True)
     photos = serializers.ListSerializer(child=serializers.CharField(), allow_null=True)
