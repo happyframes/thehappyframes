@@ -27,7 +27,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 SECRET_KEY = os.getenv("secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['thehappyframes.com']
 
