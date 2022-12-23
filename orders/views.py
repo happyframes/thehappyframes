@@ -156,7 +156,14 @@ class AllOrdersAPI(APIView):
                 tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
                 photos = photos_obj.values_list('photo', flat=True)
                 order.update(photos=list(photos), tile=tile)
-                order["address"] = eval(order["address"]) if order["address"] != 'null' else None
+                try:
+                    order["address"] = eval(order["address"]) if order["address"] != 'null' else None
+                except Exception:
+                    message = "Internal server Error"
+                    data = f"Error: {order}"
+                    failure_ob = Failure(data, 500, message)
+                    return Response(FailureSerializer(failure_ob).data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
             paginator = Paginator(orders, 10)
             page_obj = paginator.get_page(page)
             api_output = []
