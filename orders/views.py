@@ -106,7 +106,7 @@ class UserOrdersAPI(APIView):
                         tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
                         photos = photos_obj.values_list('photo', flat=True)
                         order.update(photos=list(photos), tile=tile)
-                        order["address"] = eval(order["address"]) if order["address"] != 'null' else None
+                        order["address"] = order["address"] if order["address"] != 'null' else {}
                     api_output = []
                     for order in user_orders:
                         output = UserOrders(**order)
@@ -157,7 +157,7 @@ class AllOrdersAPI(APIView):
                 photos = photos_obj.values_list('photo', flat=True)
                 order.update(photos=list(photos), tile=tile)
                 try:
-                    order["address"] = eval(order["address"]) if order["address"] != 'null' else None
+                    order["address"] = order["address"] if order["address"] != 'null' else {}
                 except Exception:
                     message = "Internal server Error"
                     data = f"Error: {order}"
