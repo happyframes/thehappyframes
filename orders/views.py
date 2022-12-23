@@ -61,7 +61,7 @@ class OrdersAPI(APIView):
                 photos_obj = Photos.objects.filter(order_id=order.order_id)
                 tile = photos_obj.values_list('tile', flat=True).distinct()[0]
                 user_order.update(photos=list(photos), tile=tile)
-                user_order["address"] = eval(user_order["address"])
+                user_order["address"] = user_order["address"]
                 api_output = UserOrders(**user_order)
                 succes_obj = Success([api_output])
                 response = UserOrdersDeserializer(succes_obj)
@@ -156,14 +156,7 @@ class AllOrdersAPI(APIView):
                 tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
                 photos = photos_obj.values_list('photo', flat=True)
                 order.update(photos=list(photos), tile=tile)
-                try:
-                    order["address"] = order["address"] if order["address"] != 'null' else {}
-                except Exception:
-                    message = "Internal server Error"
-                    data = f"Error: {order}"
-                    failure_ob = Failure(data, 500, message)
-                    return Response(FailureSerializer(failure_ob).data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+                order["address"] = order["address"] if order["address"] != 'null' else {}
             paginator = Paginator(orders, 10)
             page_obj = paginator.get_page(page)
             api_output = []
