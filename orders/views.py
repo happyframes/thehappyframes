@@ -61,7 +61,8 @@ class OrdersAPI(APIView):
                 photos_obj = Photos.objects.filter(order_id=order.order_id)
                 tile = photos_obj.values_list('tile', flat=True).distinct()[0]
                 user_order.update(photos=list(photos), tile=tile)
-                user_order["address"] = eval(user_order["address"])
+                address = order["address"].replace('null', 'None')
+                user_order["address"] = eval(address)
                 api_output = UserOrders(**user_order)
                 succes_obj = Success([api_output])
                 response = UserOrdersDeserializer(succes_obj)
@@ -106,7 +107,8 @@ class UserOrdersAPI(APIView):
                         tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
                         photos = photos_obj.values_list('photo', flat=True)
                         order.update(photos=list(photos), tile=tile)
-                        order["address"] = eval(order["address"])
+                        address = order["address"].replace('null', 'None')
+                        order["address"] = eval(address)
                     api_output = []
                     for order in user_orders:
                         output = UserOrders(**order)
