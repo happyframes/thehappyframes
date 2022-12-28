@@ -61,7 +61,7 @@ class OrdersAPI(APIView):
                 photos_obj = Photos.objects.filter(order_id=order.order_id)
                 tile = photos_obj.values_list('tile', flat=True).distinct()[0]
                 user_order.update(photos=list(photos), tile=tile)
-                user_order["address"] = user_order["address"]
+                user_order["address"] = eval(user_order["address"])
                 api_output = UserOrders(**user_order)
                 succes_obj = Success([api_output])
                 response = UserOrdersDeserializer(succes_obj)
@@ -106,7 +106,7 @@ class UserOrdersAPI(APIView):
                         tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
                         photos = photos_obj.values_list('photo', flat=True)
                         order.update(photos=list(photos), tile=tile)
-                        order["address"] = order["address"] if order["address"] != 'null' else {}
+                        order["address"] = eval(order["address"]) if order["address"] != 'null' else {}
                     api_output = []
                     for order in user_orders:
                         output = UserOrders(**order)
@@ -156,7 +156,7 @@ class AllOrdersAPI(APIView):
                 tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
                 photos = photos_obj.values_list('photo', flat=True)
                 order.update(photos=list(photos), tile=tile)
-                order["address"] = order["address"] if order["address"] != 'null' else {}
+                order["address"] = eval(order["address"]) if order["address"] != 'null' else {}
             paginator = Paginator(orders, 10)
             page_obj = paginator.get_page(page)
             api_output = []
