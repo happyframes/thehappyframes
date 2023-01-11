@@ -141,7 +141,7 @@ class UserOrdersAPI(APIView):
 class AllOrdersAPI(APIView):
     def post(self, request, page=1):
         try:
-            orders = Orders.objects.all().order_by('-order_id')[10*(page-1):page*10].values(
+            orders = Orders.objects.all().values(
                 'order_id',
                 'order_total',
                 'ordered_date',
@@ -152,7 +152,7 @@ class AllOrdersAPI(APIView):
                 phone_number=F('user__mobile'),
                 email=F('user__email'),
                 address=F('user__address')
-            )
+            ).order_by('-order_id')
             for order in orders:
                 photos_obj = Photos.objects.filter(order_id=order['order_id'])
                 tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
