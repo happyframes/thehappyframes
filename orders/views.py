@@ -103,10 +103,13 @@ class UserOrdersAPI(APIView):
                 ).order_by('-order_id')
                 if user_orders:
                     for order in user_orders:
-                        photos_obj = Photos.objects.filter(order_id=order['order_id'])
-                        tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
-                        photos = photos_obj.values_list('photo', flat=True)
-                        order.update(photos=list(photos), tile=tile)
+                        # photos_obj = Photos.objects.filter(order_id=order['order_id'])
+                        # tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
+                        # photos = photos_obj.values_list('photo', flat=True)
+                        photos_obj = list(Photos.objects.filter(order_id=order['order_id']).values('photo', 'tile'))
+                        photos = [obj['photo'] for obj in photos_obj]
+                        tile = photos_obj[0]['tile']
+                        order.update(photos=photos, tile=tile)
                         address = order["address"].replace('null', 'None')
                         order["address"] = eval(address)
                     api_output = []
@@ -154,10 +157,13 @@ class AllOrdersAPI(APIView):
                 address=F('user__address')
             ).order_by('-order_id')
             for order in orders:
-                photos_obj = Photos.objects.filter(order_id=order['order_id'])
-                tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
-                photos = photos_obj.values_list('photo', flat=True)
-                order.update(photos=list(photos), tile=tile)
+                # photos_obj = Photos.objects.filter(order_id=order['order_id'])
+                # tile = list(photos_obj.values_list('tile', flat=True).distinct())[0]
+                # photos = photos_obj.values_list('photo', flat=True)
+                photos_obj = list(Photos.objects.filter(order_id=order['order_id']).values('photo', 'tile'))
+                photos = [obj['photo'] for obj in photos_obj]
+                tile = photos_obj[0]['tile']
+                order.update(photos=photos, tile=tile)
                 address = order["address"].replace('null', 'None')
                 order["address"] = eval(address)
             paginator = Paginator(orders, 10)
