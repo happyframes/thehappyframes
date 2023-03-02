@@ -2,6 +2,10 @@ from rest_framework import serializers
 from utilities import SuccessSerializer
 
 
+class DeleteOrderSerializer(serializers.Serializer):
+        order_ids = serializers.ListField(child=serializers.CharField())
+
+
 class AddressSerializer(serializers.Serializer):
     email = serializers.EmailField()
     full_name = serializers.CharField(allow_null=True)

@@ -3,7 +3,7 @@ import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from orders.serializers import AddressSerializer, UserOrdersDeserializer, UserOrders
+from orders.serializers import AddressSerializer, UserOrdersDeserializer, UserOrders, DeleteOrderSerializer
 from loginApp.models import UserDetails
 from .models import Photos, Orders
 from loginApp.serializers import RegisterSerializer
@@ -181,6 +181,34 @@ class AllOrdersAPI(APIView):
                 'count': paginator.count,
                 'num_pages': paginator.num_pages
             }, status=status.HTTP_200_OK)
+        except Exception as e:
+            message = "Internal server Error"
+            data = f"Error: {e}"
+            failure_ob = Failure(data, 500, message)
+            return Response(FailureSerializer(failure_ob).data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DeleteOrdersAPI(APIView):
+    def post(self, request):
+        try:
+            serializer = DeleteOrderSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                order_ids = serializer.validated_data['order_ids']
+                Photos.objects.filter(order_id__in=order_ids).delete()
+                Orders.objects.filter(order_id__in=order_ids).delete()
+                response = Orders.objects.filter(order_id__in=order_ids)
+                if not response:
+                    return Response({
+                        'status': 200,
+                        'message': f"Orders deleted successfully",
+                        'data': f"Orders: {order_ids} deleted successfully",
+                    }, status=status.HTTP_200_OK)
+                else:
+                    return Response({
+                        'status': 400,
+                        'message': f"Orders failed to delete",
+                        'data': f"Orders: {order_ids} not deleted",
+                    }, status=status.HTTP_200_OK)
         except Exception as e:
             message = "Internal server Error"
             data = f"Error: {e}"
