@@ -29,9 +29,10 @@ class OrdersAPI(APIView):
                 )
                 order_count = Orders.objects.all().count()
                 if not order_count:
-                    order_id = str(1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+                    order_id = "100" + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + str(1)
                 else:
-                    order_id = str(order_count + 1) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+                    lst_order = Orders.objects.last().order_id
+                    order_id = str(lst_order + 1)
                 order = Orders.objects.create(
                     order_id=int(order_id),
                     user=user[0],
@@ -166,7 +167,7 @@ class AllOrdersAPI(APIView):
                 order.update(photos=photos, tile=tile)
                 address = order["address"].replace('null', 'None')
                 order["address"] = eval(address)
-            paginator = Paginator(orders, 10)
+            paginator = Paginator(orders, 5)
             page_obj = paginator.get_page(page)
             api_output = []
             for order in page_obj:
